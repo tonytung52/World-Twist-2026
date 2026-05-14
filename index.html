@@ -1,0 +1,372 @@
+# World-Twist-2026
+import base64
+
+# 讀取使用者上傳的照片並轉換為 Base64
+try:
+    with open('input_file_0.png', 'rb') as img_file:
+        img_base64 = base64.b64encode(img_file.read()).decode('utf-8')
+    img_data_uri = f"data:image/png;base64,{img_base64}"
+except Exception:
+    # 備用方案：若讀取失敗則使用占位符
+    img_data_uri = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"
+
+# 定義最終的 HTML 內容
+html_content = f"""
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>川習會戰略分析 - Trump-Xi Summit Strategic Analysis</title>
+    <style>
+        :root {{
+            --bg-color: #000c1d; /* 深暗藍色背景 */
+            --secondary-bg: #001f3f;
+            --tech-brown: #3d2b1f; /* 科技與資本專用深棕色 */
+            --highlight-yellow: #ffff00;
+            --bright-white: #ffffff;
+            --accent-blue: #007bff;
+            --text-muted: #cccccc;
+        }}
+
+        body {{
+            background-color: var(--bg-color);
+            color: var(--bright-white);
+            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }}
+
+        /* 新聞跑馬燈 */
+        .marquee-container {{
+            background-color: #000;
+            color: var(--highlight-yellow);
+            padding: 10px 0;
+            font-weight: bold;
+            border-bottom: 2px solid var(--highlight-yellow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }}
+
+        marquee {{
+            font-size: 1.1em;
+        }}
+
+        /* 標題區 */
+        header {{
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(to bottom, #001529, var(--bg-color));
+        }}
+
+        h1 {{
+            color: var(--highlight-yellow);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px #000;
+        }}
+
+        h2.subtitle {{
+            color: var(--bright-white);
+            font-size: 1.5em;
+            font-weight: 300;
+        }}
+
+        /* 內容容器 */
+        .container {{
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }}
+
+        /* 互動式卡片佈局 */
+        .grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }}
+
+        .card {{
+            background-color: var(--secondary-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }}
+
+        .card:hover {{
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.2);
+            border-color: var(--highlight-yellow);
+        }}
+
+        .card-img {{
+            width: 100%;
+            height: 250px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            background-color: #333;
+        }}
+
+        /* 使用上傳照片作為背景並潤飾為深棕色氛圍 */
+        .tech-bg {{
+            background-color: var(--tech-brown) !important;
+            background-blend-mode: overlay;
+            background-image: url('{img_data_uri}');
+        }}
+
+        /* 水印 */
+        .watermark {{
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+        }}
+
+        .card-content {{
+            padding: 20px;
+        }}
+
+        .card-content h3 {{
+            color: var(--highlight-yellow);
+            margin-top: 0;
+        }}
+
+        .tag {{
+            display: inline-block;
+            background: var(--accent-blue);
+            color: white;
+            padding: 2px 8px;
+            font-size: 0.8em;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }}
+
+        /* 彈出視窗 (Modal) */
+        .modal {{
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }}
+
+        .modal-body {{
+            background: var(--secondary-bg);
+            max-width: 850px;
+            width: 100%;
+            max-height: 85%;
+            overflow-y: auto;
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid var(--highlight-yellow);
+            position: relative;
+        }}
+
+        .close-btn {{
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2.5em;
+            color: var(--highlight-yellow);
+            cursor: pointer;
+        }}
+
+        footer {{
+            text-align: center;
+            padding: 50px;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }}
+
+        .analysis-text {{
+            color: var(--bright-white);
+            font-size: 1.15em;
+            line-height: 1.8;
+        }}
+
+        .highlight-box {{
+            border-left: 4px solid var(--highlight-yellow);
+            padding-left: 15px;
+            margin: 20px 0;
+            background: rgba(255, 255, 0, 0.05);
+        }}
+    </style>
+</head>
+<body>
+
+    <div class="marquee-container">
+        <marquee scrollamount="6">
+            🔴 即時滾動：川習會正式登場，美方17位科技CEO隨行爭取監管解套 ... 🛢️ 伊朗哈格島發生嚴重漏油事件，經濟出口受阻 ... 🚀 俄羅斯公布「薩爾馬特」導彈最新數據 ... 🇩🇰 美國與丹麥商討格陵蘭軍事基地 ... 🇰🇷 財長貝森特不滿南韓政治親中傾向 ... 🇺🇸 盧比歐穿著特製「囚服」訪中引發熱議
+        </marquee>
+    </div>
+
+    <header>
+        <h1>川習會戰略分析：全球秩序的劇烈重組</h1>
+        <h2 class="subtitle">Trump-Xi Summit: Strategic Reconfiguration of Global Order</h2>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            <div class="card" onclick="showDetail('tech')">
+                <div class="card-img tech-bg">
+                    <span class="watermark">Edited by 董世渝</span>
+                </div>
+                <div class="card-content">
+                    <span class="tag">科技與資本</span>
+                    <h3>16.7兆美元的CEO豪華團</h3>
+                    <p>黃仁勳、庫克、馬斯克等17位巨頭，在深厚的資本博弈中向北京要求開放。</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="showDetail('iran')">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1523315750278-f72675d04523?auto=format&fit=crop&w=800&q=80')">
+                    <span class="watermark">Edited by 董世渝</span>
+                </div>
+                <div class="card-content">
+                    <span class="tag">能源變局</span>
+                    <h3>哈格島漏油：伊朗的命門</h3>
+                    <p>石油出口與國內經濟的雙重崩潰，如何削弱習近平的籌碼？</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="showDetail('rubio')">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1511192336575-5a79af67a629?auto=format&fit=crop&w=800&q=80')">
+                    <span class="watermark">Edited by 董世渝</span>
+                </div>
+                <div class="card-content">
+                    <span class="tag">政治角力</span>
+                    <h3>盧比歐的「囚服」外交</h3>
+                    <p>對中鷹派的羞辱式反擊，穿著馬杜洛Nike套裝訪中的背後涵義。</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="showDetail('global')">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80')">
+                    <span class="watermark">Edited by 董世渝</span>
+                </div>
+                <div class="card-content">
+                    <span class="tag">地緣佈局</span>
+                    <h3>從格陵蘭到委內瑞拉</h3>
+                    <p>美國第51州的言論、北約撤軍與格陵蘭軍事基地的三方戰略佈局。</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="showDetail('korea')">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1533929736458-ca588d08c8be?auto=format&fit=crop&w=800&q=80')">
+                    <span class="watermark">Edited by 董世渝</span>
+                </div>
+                <div class="card-content">
+                    <span class="tag">盟友互疑</span>
+                    <h3>貝森特的憤怒：假面盟友南韓</h3>
+                    <p>美財長對何立峰會談中流露的不滿，南韓的親中氛圍面臨攤牌。</p>
+                </div>
+            </div>
+
+            <div class="card" onclick="showDetail('result')">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=800&q=80')">
+                    <span class="watermark">Edited by 董世渝</span>
+                </div>
+                <div class="card-content">
+                    <span class="tag">最終預測</span>
+                    <h3>川習會：劇終或序幕？</h3>
+                    <p>綜合各方壓力，解析本次會談可能達成的「冰冷和平」。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-body">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modalText" class="analysis-text">
+                </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 全球戰略觀察報告 | 數據分析：董世渝</p>
+        <p style="font-size: 0.8em; opacity: 0.6;">Designed for GitHub Pages Deployment</p>
+    </footer>
+
+    <script>
+        const details = {{
+            'tech': `
+                <h2 style="color:var(--highlight-yellow)">16.7兆美元的CEO豪華團：商業盤算分析</h2>
+                <div class="highlight-box">
+                    <strong>主要成員：</strong> 黃仁勳 (NVIDIA)、馬斯克 (Tesla/SpaceX)、庫克 (Apple) 等。
+                </div>
+                <p><strong>盤算 1：中國開放 (China Openness)</strong><br>
+                隨行的晶片與科技巨頭面臨美國對華出口限制的壓力，黃仁勳等人希望中方承諾在AI算力基礎設施上維持市場開放。</p>
+                <p><strong>盤算 2：監管解套 (Regulatory Relief)</strong><br>
+                要求中方停止針對美企的數據安全審查。巨頭們希望換取在中國運營的法律安定性，以保護其龐大的資本投入。</p>
+            `,
+            'iran': `
+                <h2 style="color:var(--highlight-yellow)">哈格島漏油事件：習近平籌碼的喪失</h2>
+                <p>哈格島是伊朗90%石油出口的命脈。此次嚴重的漏油事件暴露了伊朗維護能力的崩潰。</p>
+                <div class="highlight-box">
+                    <strong>地緣影響：</strong> 伊朗經濟出口的窘境，意味著中國在談判桌上失去了重要的能源槓桿。
+                </div>
+            `,
+            'rubio': `
+                <h2 style="color:var(--highlight-yellow)">盧比歐「囚服」訪中：象徵主義的反擊</h2>
+                <p>盧比歐穿著馬杜洛Nike套裝（囚服樣式）訪中，極具視覺嘲諷，展現美方絕不與獨裁方案妥協的立場。</p>
+            `,
+            'global': `
+                <h2 style="color:var(--highlight-yellow)">美國全球戰略：大膽的極限佈局</h2>
+                <p><strong>1. 拉美施壓：</strong> 將委內瑞拉納入戰略核心（51州言論），切斷中俄支點。</p>
+                <p><strong>2. 格陵蘭基地：</strong> 與丹麥密談軍事基地，掌控北極航道。俄羅斯公布薩爾馬特導彈，正是對此的戰術恐嚇。</p>
+            `,
+            'korea': `
+                <h2 style="color:var(--highlight-yellow)">南韓「假面盟友」疑雲：美財長的憤怒</h2>
+                <p>貝森特在韓國會談中表現的不悅，反映出美方正嚴厲審視南韓的「親中」傾向，視其為假面盟友，未來或將在科技鏈中邊緣化韓方。</p>
+            `,
+            'result': `
+                <h2 style="color:var(--highlight-yellow)">預期性分析：會談的寒冷結局</h2>
+                <p>這將是一場「冰冷的停火」。在缺乏伊朗籌碼的情況下，習近平可能在採購與監管上做出妥協。川普將以格陵蘭與拉美的全新佈局，確立「美國優先 2.0」的新秩序。</p>
+            `
+        }};
+
+        function showDetail(key) {{
+            document.getElementById('modalText').innerHTML = details[key];
+            document.getElementById('infoModal').style.display = 'flex';
+        }}
+
+        function closeModal() {{
+            document.getElementById('infoModal').style.display = 'none';
+        }}
+
+        window.onclick = function(event) {{
+            if (event.target == document.getElementById('infoModal')) {{
+                closeModal();
+            }}
+        }}
+    </script>
+</body>
+</html>
+"""
+
+# 寫入檔案
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("index.html v2 生成完畢，已嵌入自定義照片並維持深棕色潤飾。")
